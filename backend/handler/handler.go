@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"tasktracker/models"
 	"tasktracker/services"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type Handler struct{}
@@ -22,6 +24,11 @@ func NewHandler(c *Config) {
 
 	g.GET("/task", h.GetTasks)
 	g.POST("/task", h.CreateTask)
+	g.DELETE("/task/:id", h.DeleteTask)
+}
+
+type IdInUriRequest struct {
+	ID string `uri:"id" binding:"required"`
 }
 
 func (h *Handler) GetTasks(c *gin.Context) {
@@ -72,4 +79,22 @@ func (h *Handler) CreateTask(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{"id": id})
+}
+
+func (h *Handler) DeleteTask(c *gin.Context) {
+	var uriReq *IdInUriRequest
+	uriErr := c.ShouldBindUri(&uriReq)
+
+	if uriErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": uriErr.Error()})
+		return
+	}
+	err := services.DeleteTask(uriReq.ID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.Status(http.StatusNotFound)
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+	c.Status(http.StatusNoContent)
 }

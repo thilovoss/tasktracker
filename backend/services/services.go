@@ -20,3 +20,8 @@ func CreateTask(task *models.Task) (*string, error) {
 	}
 	return &task.ID, tx.Error
 }
+
+func DeleteTask(ID string) error {
+	tx := database.Instance.Where("id = ?", ID).Delete(&models.Task{})
+	return tx.Error
+}
