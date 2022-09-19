@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"tasktracker/gormpatch"
 	"tasktracker/models"
 	"tasktracker/services"
 	"time"
@@ -38,6 +39,25 @@ func (h *Handler) GetTasks(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, tasks)
+}
+
+func (h *Handler) GetTaskByID(c *gin.Context) {
+	var uriReq *IdInUriRequest
+	uriErr := c.ShouldBindUri(&uriReq)
+	if uriErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": uriErr.Error()})
+		return
+	}
+
+	task, err := services.GetTaskByID(uriReq.ID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.Status(http.StatusNotFound)
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, task)
 }
 
 type TaskInput struct {
@@ -97,4 +117,26 @@ func (h *Handler) DeleteTask(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 	c.Status(http.StatusNoContent)
+}
+
+func (h *Handler) UpdateTaskById(c *gin.Context) {
+	var uriReq *IdInUriRequest
+	uriErr := c.ShouldBindUri(&uriReq)
+	if uriErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": uriErr.Error()})
+	}
+
+	var patches []gormpatch.JsonPatch
+	err := c.BindJSON(&patches)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	task, err := services.PatchTask(uriReq.ID, patches)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, task)
 }

@@ -13,6 +13,16 @@ func GetAllTasks() (*[]models.Task, error) {
 	return &results, tx.Error
 }
 
+func GetTaskByID(ID string) (*models.Task, error) {
+	var result models.Task
+
+	tx := database.Instance.Where("id = ?", ID).First(&result)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return &result, tx.Error
+}
+
 func CreateTask(task *models.Task) (*string, error) {
 	tx := database.Instance.Create(task)
 	if tx.Error != nil {
