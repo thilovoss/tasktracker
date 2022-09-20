@@ -23,42 +23,21 @@ func NewHandler(c *Config) {
 
 	g := c.R.Group("/api")
 
-	g.GET("/task", h.GetTasks)
 	g.POST("/task", h.CreateTask)
+	g.GET("/task", h.GetAllTasks)
+	g.GET("/task/:id", h.GetTaskByID)
+	g.PUT("/task/:id", h.UpdateTaskByID)
 	g.DELETE("/task/:id", h.DeleteTask)
-	g.PUT("/task/:id", h.UpdateTaskById)
+
+	g.POST("/category", h.CreateCategory)
+	g.GET("/category", h.GetAllCategories)
+	g.GET("/category/:id", h.GetCategoryById)
+	g.PUT("/category/:id", h.UpdateCategoryByID)
+	g.DELETE("/category/:id", h.DeleteCategory)
 }
 
 type IdInUriRequest struct {
 	ID string `uri:"id" binding:"required"`
-}
-
-func (h *Handler) GetTasks(c *gin.Context) {
-	tasks, err := services.GetAllTasks()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, tasks)
-}
-
-func (h *Handler) GetTaskByID(c *gin.Context) {
-	var uriReq *IdInUriRequest
-	uriErr := c.ShouldBindUri(&uriReq)
-	if uriErr != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": uriErr.Error()})
-		return
-	}
-
-	task, err := services.GetTaskByID(uriReq.ID)
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		c.Status(http.StatusNotFound)
-		return
-	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, task)
 }
 
 type TaskInput struct {
@@ -102,25 +81,35 @@ func (h *Handler) CreateTask(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"id": id})
 }
 
-func (h *Handler) DeleteTask(c *gin.Context) {
+func (h *Handler) GetAllTasks(c *gin.Context) {
+	tasks, err := services.GetAllTasks()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, tasks)
+}
+
+func (h *Handler) GetTaskByID(c *gin.Context) {
 	var uriReq *IdInUriRequest
 	uriErr := c.ShouldBindUri(&uriReq)
-
 	if uriErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": uriErr.Error()})
 		return
 	}
-	err := services.DeleteTask(uriReq.ID)
+
+	task, err := services.GetTaskByID(uriReq.ID)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		c.Status(http.StatusNotFound)
 		return
 	} else if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusOK, task)
 }
 
-func (h *Handler) UpdateTaskById(c *gin.Context) {
+func (h *Handler) UpdateTaskByID(c *gin.Context) {
 	var uriReq *IdInUriRequest
 	uriErr := c.ShouldBindUri(&uriReq)
 	if uriErr != nil {
@@ -140,4 +129,113 @@ func (h *Handler) UpdateTaskById(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, task)
+}
+
+func (h *Handler) DeleteTask(c *gin.Context) {
+	var uriReq *IdInUriRequest
+	uriErr := c.ShouldBindUri(&uriReq)
+
+	if uriErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": uriErr.Error()})
+		return
+	}
+	err := services.DeleteTask(uriReq.ID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.Status(http.StatusNotFound)
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+	c.Status(http.StatusNoContent)
+}
+
+type CategoryInput struct {
+	Title string `json:"title" binding:"required"`
+}
+
+func (h *Handler) CreateCategory(c *gin.Context) {
+	var categoryInput CategoryInput
+
+	if err := c.ShouldBindJSON(&categoryInput); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	category := &models.Category{
+		Title: categoryInput.Title,
+	}
+	id, err := services.CreateCategory(category)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{"id": id})
+}
+
+func (h *Handler) GetAllCategories(c *gin.Context) {
+	categories, err := services.GetAllCategories()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, categories)
+}
+
+func (h *Handler) GetCategoryById(c *gin.Context) {
+	var uriReq *IdInUriRequest
+	uriErr := c.ShouldBindUri(&uriReq)
+	if uriErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": uriErr.Error()})
+		return
+	}
+
+	category, err := services.GetCategoryById(uriReq.ID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.Status(http.StatusNotFound)
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, category)
+}
+
+func (h *Handler) UpdateCategoryByID(c *gin.Context) {
+	var uriReq *IdInUriRequest
+	uriErr := c.ShouldBindUri(&uriReq)
+	if uriErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": uriErr.Error()})
+	}
+
+	var patches []gormpatch.JsonPatch
+	err := c.BindJSON(&patches)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	category, err := services.PatchCategory(uriReq.ID, &patches)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, category)
+}
+
+func (h *Handler) DeleteCategory(c *gin.Context) {
+	var uriReq *IdInUriRequest
+	uriErr := c.ShouldBindUri(&uriReq)
+
+	if uriErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": uriErr.Error()})
+		return
+	}
+	err := services.DeleteCategory(uriReq.ID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.Status(http.StatusNotFound)
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+	c.Status(http.StatusNoContent)
 }
