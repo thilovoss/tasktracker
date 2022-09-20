@@ -26,6 +26,7 @@ func NewHandler(c *Config) {
 	g.GET("/task", h.GetTasks)
 	g.POST("/task", h.CreateTask)
 	g.DELETE("/task/:id", h.DeleteTask)
+	g.PUT("/task/:id", h.UpdateTaskById)
 }
 
 type IdInUriRequest struct {
@@ -133,7 +134,7 @@ func (h *Handler) UpdateTaskById(c *gin.Context) {
 		return
 	}
 
-	task, err := services.PatchTask(uriReq.ID, patches)
+	task, err := services.PatchTask(uriReq.ID, &patches)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

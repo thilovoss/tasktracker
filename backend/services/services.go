@@ -2,7 +2,10 @@ package services
 
 import (
 	"tasktracker/database"
+	"tasktracker/gormpatch"
 	"tasktracker/models"
+
+	"gorm.io/gorm"
 )
 
 func GetAllTasks() (*[]models.Task, error) {
@@ -29,6 +32,35 @@ func CreateTask(task *models.Task) (*string, error) {
 		return &task.ID, tx.Error
 	}
 	return &task.ID, tx.Error
+}
+
+func PatchTask(taskID string, patches *[]gormpatch.JsonPatch) (*models.Task, error) {
+	task, err := GetTaskByID(taskID)
+	if err != nil {
+		return nil, err
+	}
+
+	err = database.Instance.Transaction(func(tx *gorm.DB) error {
+		for index := range *patches {
+			patch := (*patches)[index]
+			err := gormpatch.ApplyPatch(&task, &patch)
+			if err != nil {
+				return err
+			}
+		}
+
+		err := tx.First(&task).Error
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return task, err
 }
 
 func DeleteTask(ID string) error {
