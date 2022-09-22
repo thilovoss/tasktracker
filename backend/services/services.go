@@ -16,14 +16,20 @@ func GetAllTasks() (*[]models.Task, error) {
 	return &results, tx.Error
 }
 
-func GetTaskByID(ID string) (*models.Task, error) {
+func GetTaskByID(taskID string) (*models.Task, error) {
 	var result models.Task
 
-	tx := database.Instance.Where("id = ?", ID).First(&result)
+	tx := database.Instance.Where("id = ?", taskID).First(&result)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
 	return &result, tx.Error
+}
+
+func GetAllTasksByCategoryID(categoryID string) (*[]models.Task, error) {
+	var category models.Category
+	tx := database.Instance.Model(&models.Category{}).Preload("Tasks").Find(&category)
+	return &category.Tasks, tx.Error
 }
 
 func CreateTask(task *models.Task) (*string, error) {

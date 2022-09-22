@@ -23,6 +23,6 @@ func Connect(url string) {
 }
 
 func Migrate() {
-	Instance.AutoMigrate(&models.Task{}, models.Category{})
+	Instance.AutoMigrate(models.Category{}, &models.Task{})
 	fmt.Println("Database Migration completed...")
 }

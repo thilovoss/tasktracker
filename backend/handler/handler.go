@@ -26,6 +26,7 @@ func NewHandler(c *Config) {
 	g.POST("/task", h.CreateTask)
 	g.GET("/task", h.GetAllTasks)
 	g.GET("/task/:id", h.GetTaskByID)
+	g.GET("/task/category/:id", h.GetTasksByCategoryID)
 	g.PUT("/task/:id", h.UpdateTaskByID)
 	g.DELETE("/task/:id", h.DeleteTask)
 
@@ -109,6 +110,25 @@ func (h *Handler) GetTaskByID(c *gin.Context) {
 	c.JSON(http.StatusOK, task)
 }
 
+func (h *Handler) GetTasksByCategoryID(c *gin.Context) {
+	var uriReq *IdInUriRequest
+	uriErr := c.ShouldBindUri(&uriReq)
+	if uriErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": uriErr.Error()})
+		return
+	}
+
+	tasks, err := services.GetAllTasksByCategoryID(uriReq.ID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.Status(http.StatusNotFound)
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, tasks)
+}
+
 func (h *Handler) UpdateTaskByID(c *gin.Context) {
 	var uriReq *IdInUriRequest
 	uriErr := c.ShouldBindUri(&uriReq)
@@ -150,7 +170,8 @@ func (h *Handler) DeleteTask(c *gin.Context) {
 }
 
 type CategoryInput struct {
-	Title string `json:"title" binding:"required"`
+	Title            string `json:"title" binding:"required"`
+	ParentCategoryID string `json:"parentCategoryId"`
 }
 
 func (h *Handler) CreateCategory(c *gin.Context) {
@@ -164,6 +185,10 @@ func (h *Handler) CreateCategory(c *gin.Context) {
 	category := &models.Category{
 		Title: categoryInput.Title,
 	}
+	if categoryInput.ParentCategoryID != "" {
+		category.ParentID = &categoryInput.ParentCategoryID
+	}
+
 	id, err := services.CreateCategory(category)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
