@@ -17,5 +17,5 @@ type Task struct {
 	Description string    `gorm:"column:description" json:"description" gorm-patch:"patchable"`
 	Start       time.Time `gorm:"column:start" json:"start" gorm-patch:"patchable"`
 	End         time.Time `gorm:"column:end" json:"end" gorm-patch:"patchable"`
-	CategoryID  string    `json:"categoryId" gorm-patch:"patchable"`
+	CategoryID  string    `gorm:"default:uuid_nil()" json:"categoryId" gorm-patch:"patchable"`
 }
