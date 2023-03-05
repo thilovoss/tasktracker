@@ -5,7 +5,7 @@
 
 @layer base {
     button {
-        @apply border-gray-900;
+        @apply border-slate-700;
         @apply border-[1px];
         @apply rounded-lg;
         @apply py-1;
@@ -16,6 +16,27 @@
         @apply border-[1px];
         @apply rounded-md;
         @apply px-2;
+        @apply focus-visible:border-[#aaaeb7];
+        @apply focus-visible:border-[1px];
+        @apply focus-visible:outline-none;
+        @apply hover:border-[#aaaeb7];
+        @apply ease-in;
+        @apply duration-200;
+    }
+
+
+    textarea {
+        @apply border-[1px];
+        @apply rounded-md;
+        @apply px-2; 
+        @apply focus-visible:outline-none;
+        @apply focus-visible:border-[#aaaeb7];
+        @apply focus-visible:border-[1px];
+        @apply focus-visible:ease-linear;
+        @apply focus-visible:duration-75;
+        @apply hover:border-[#aaaeb7];
+        @apply ease-in;
+        @apply duration-200;
     }
 
     h2 {
@@ -25,4 +46,6 @@
         @apply mt-0;
         @apply mb-2;
     }
+
+    
 }

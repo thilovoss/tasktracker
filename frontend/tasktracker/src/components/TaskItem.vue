@@ -45,15 +45,15 @@ export default {
 <template>
     <div class="grid grid-cols-5  border-solid border-2 m-2 rounded-md p-2">
         <div class="col-span-2">
-            <h2>{{ task.name }}</h2>
-            <p>{{ task.description }}</p>
+            <h2 class="text-primary">{{ task.name }}</h2>
+            <p class="text-primary">{{ task.description }}</p>
             
         </div>
         <div class="col-span-1">
-            <div>start: {{ convertDate(task.start) }}</div>
-            <div>end: {{ convertDate(task.end) }}</div>
-            <div>duration: {{ calculateDuration(task.start, task.end) }}</div>
+            <div class="text-primary">start: {{ convertDate(task.start) }}</div>
+            <div class="text-primary">end: {{ convertDate(task.end) }}</div>
+            <div class="text-primary">duration: {{ calculateDuration(task.start, task.end) }}</div>
         </div>
-        <button v-on:click="deleteTask(task.id)" class="col-span-2 my-auto justify-self-end">delete</button>
+        <button v-on:click="deleteTask(task.id)" class="text-primary col-span-2 my-auto justify-self-end">delete</button>
     </div>
 </template>

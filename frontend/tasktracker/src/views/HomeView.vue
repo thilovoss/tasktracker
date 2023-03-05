@@ -5,7 +5,7 @@ import AddTask from "../components/AddTask.vue"
 </script>
 
 <template>
-  <main >
+  <main>
     <AddTask class="mb-6 mx-2"></AddTask>
     <TaskList></TaskList>
   </main>

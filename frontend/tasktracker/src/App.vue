@@ -5,10 +5,10 @@ import './styles/app.css'; // Here
 </script>
 
 <template >
-  <div >
+  <div>
   <header>
     <div >
-      <div >
+      <div class="p-2">
         <h1 class="mt-0 mb-2 text-5xl font-medium leading-tight text-primary">tasktracker</h1>
         <h3 class="mt-0 mb-2 text-3xl font-medium leading-tight text-primary">
           track your tasks
