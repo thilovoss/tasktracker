@@ -1,0 +1,28 @@
+/* ./src/styles/app.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    button {
+        @apply border-gray-900;
+        @apply border-[1px];
+        @apply rounded-lg;
+        @apply py-1;
+        @apply px-3
+    }
+
+    input {
+        @apply border-[1px];
+        @apply rounded-md;
+        @apply px-2;
+    }
+
+    h2 {
+        @apply text-2xl;
+        @apply font-medium;
+        @apply leading-tight;
+        @apply mt-0;
+        @apply mb-2;
+    }
+}

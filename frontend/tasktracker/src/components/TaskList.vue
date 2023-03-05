@@ -21,9 +21,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <AddTask></AddTask>
     <div v-for='gettersTask in getTasks'>
         <TaskItem :task="gettersTask"></TaskItem>
     </div>
-    <button v-on:click="store.fetchTasks()">fetch</button>
 </template>

@@ -3,7 +3,6 @@
 import { useTaskStore, type Task } from '@/stores/tasks'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-import { onMounted, ref } from 'vue';
 
 const store = useTaskStore()
 
@@ -37,8 +36,10 @@ export default {
 </script>
 
 <template>
-    <input v-model="name" type="text" placeholder="title" />
-    <input v-model="description" type="text" placeholder="descripton" />
-    <VueDatePicker v-model="date" range></VueDatePicker>
-    <button v-on:click="addTask($data)">add</button>
+    <div class="grid grid-cols-5 border-solid border-2 rounded-md p-2">
+        <input v-model="name" type="text" placeholder="title" class="col-span-1 mr-2" />
+        <input v-model="description" type="text" placeholder="descripton" class="col-span-1 mr-2"/>
+        <VueDatePicker v-model="date" range class="max-w-md col-span-1" ></VueDatePicker>
+        <button v-on:click="addTask($data)" class="justify-self-end col-span-2">add</button>
+    </div>
 </template>

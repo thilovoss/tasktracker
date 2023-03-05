@@ -10,8 +10,6 @@ function calculateDuration(start: String, end: String) {
     const startDate = new Date(start)
     const endDate = new Date(end)
     const differenceMilliseconds = endDate - startDate
-    console.log(differenceMilliseconds)
-    console.log(3.6e6)
     var difference: String
     if (differenceMilliseconds < 3.6e6) {
         difference = differenceMilliseconds / 60000 + "m"
@@ -45,12 +43,17 @@ export default {
 </script>
 
 <template>
-    <div>
-        <h2>{{ task.name }}</h2>
-        <p>{{ task.description }}</p>
-        <div>start: {{ convertDate(task.start) }}</div>
-        <div>end: {{ convertDate(task.end) }}</div>
-        <div>duration: {{ calculateDuration(task.start, task.end) }}</div>
-        <button v-on:click="deleteTask(task.id)">delete</button>
+    <div class="grid grid-cols-5  border-solid border-2 m-2 rounded-md p-2">
+        <div class="col-span-2">
+            <h2>{{ task.name }}</h2>
+            <p>{{ task.description }}</p>
+            
+        </div>
+        <div class="col-span-1">
+            <div>start: {{ convertDate(task.start) }}</div>
+            <div>end: {{ convertDate(task.end) }}</div>
+            <div>duration: {{ calculateDuration(task.start, task.end) }}</div>
+        </div>
+        <button v-on:click="deleteTask(task.id)" class="col-span-2 my-auto justify-self-end">delete</button>
     </div>
 </template>

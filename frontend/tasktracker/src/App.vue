@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import './styles/app.css'; // Here
+
 </script>
 
-<template>
+<template >
+  <div >
   <header>
-    <div class="wrapper">
-      <div>
-        <h1 class="green">tasktracker</h1>
-        <h3>
+    <div >
+      <div >
+        <h1 class="mt-0 mb-2 text-5xl font-medium leading-tight text-primary">tasktracker</h1>
+        <h3 class="mt-0 mb-2 text-3xl font-medium leading-tight text-primary">
           track your tasks
         </h3>
       </div>
@@ -19,6 +22,8 @@ import { RouterLink, RouterView } from 'vue-router'
   </header>
 
   <RouterView />
+
+</div>
 </template>
 
 <style scoped>
