@@ -29,6 +29,13 @@ export const useTaskStore = defineStore("tasks", {
                 console.log(this.getTasks)
                 console.log(error)
             }
+        },
+        async createTask(task: Task) {
+            try {
+                await axios.post("http://localhost:8080/api/task", task)
+            } catch (error) {
+                console.log(error)
+            }
         }
     },
 })

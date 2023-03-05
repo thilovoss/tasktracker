@@ -23,6 +23,9 @@ func Connect(url string) {
 }
 
 func Migrate() {
-	Instance.AutoMigrate(models.Category{}, &models.Task{})
+	err := Instance.AutoMigrate(models.Category{}, &models.Task{})
+	if err != nil {
+		log.Fatalln(err)
+	}
 	fmt.Println("Database Migration completed...")
 }

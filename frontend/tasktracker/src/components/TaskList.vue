@@ -1,27 +1,29 @@
 <script setup lang="ts">
-    import TaskItem from "./TaskItem.vue"
-    import { useTaskStore } from '../stores/tasks'
-    import { computed } from "@vue/reactivity";
-    import { onMounted } from "vue";
+import TaskItem from "./TaskItem.vue"
+import AddTask from "./AddTask.vue"
+import { useTaskStore } from '../stores/tasks'
+import { computed } from "@vue/reactivity";
+import { onMounted } from "vue";
 
-    const store = useTaskStore()
+const store = useTaskStore()
 
-    const getTasks = computed(() => {
-        return store.getTasks
-    })
+const getTasks = computed(() => {
+    return store.getTasks
+})
 
-    const tasks = computed(() => {
-        return store.tasks
-    })
+const tasks = computed(() => {
+    return store.tasks
+})
 
-    onMounted(() => {   
-        store.fetchTasks()
-    })
+onMounted(() => {
+    store.fetchTasks()
+})
 </script>
 
 <template>
+    <AddTask></AddTask>
     <div v-for='gettersTask in getTasks'>
-    <TaskItem :task="gettersTask"></TaskItem>
+        <TaskItem :task="gettersTask"></TaskItem>
     </div>
     <button v-on:click="store.fetchTasks()">fetch</button>
 </template>
