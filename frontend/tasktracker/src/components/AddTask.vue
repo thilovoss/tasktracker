@@ -12,11 +12,11 @@ function addTask(data: any) {
     const task: Task = {
         name: data.name,
         description: data.description,
-        start: data.date[0].toISOString(),
-        end: data.date[1].toISOString(),
+        start: data.date[0],
+        end: data.date[1],
         categoryId: "4e256b3d-8162-4676-8d43-cd888e806c5d"
     }
-    store.createTask(task)
+    store.createTask(task).then(() => { store.fetchTasks() })
 }
 </script>
 

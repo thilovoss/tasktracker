@@ -1,15 +1,56 @@
+<script setup lang="ts">
+const store = useTaskStore()
+
+async function deleteTask(id: String) {
+    await store.deleteTask(id)
+    store.fetchTasks()
+}
+
+function calculateDuration(start: String, end: String) {
+    const startDate = new Date(start)
+    const endDate = new Date(end)
+    const differenceMilliseconds = endDate - startDate
+    console.log(differenceMilliseconds)
+    console.log(3.6e6)
+    var difference: String
+    if (differenceMilliseconds < 3.6e6) {
+        difference = differenceMilliseconds / 60000 + "m"
+    } else if (differenceMilliseconds < 8.64e7) {
+        difference = differenceMilliseconds / 3.6e6 + "h"
+    } else {
+        difference = differenceMilliseconds / 8.64e7 + "d"
+    }
+    // const minutes = (endDate - startDate) / 60000
+
+    return difference
+}
+
+function convertDate(dateString: String) {
+    const date: Date = new Date(dateString)
+    const dateOptions = {
+        dateStyle: "short",
+    }
+    const timeOptions = {
+        timeStyle: "short",
+    }
+    return date.toLocaleDateString([], dateOptions) + " " + date.toLocaleTimeString([], timeOptions)
+}
+</script>
+
 <script lang="ts">
-import type { Task } from '../stores/tasks'
+import { useTaskStore, type Task } from '../stores/tasks'
 export default {
-    props: {task: Object as unknown as Task}
+    props: { task: null }
 }
 </script>
 
 <template>
     <div>
-        <h2>{{task.name}}</h2>
-        <p>{{task.description}}</p>
-        <div>start: {{task.start}}</div>
-        <div>end: {{task.end}}</div>
+        <h2>{{ task.name }}</h2>
+        <p>{{ task.description }}</p>
+        <div>start: {{ convertDate(task.start) }}</div>
+        <div>end: {{ convertDate(task.end) }}</div>
+        <div>duration: {{ calculateDuration(task.start, task.end) }}</div>
+        <button v-on:click="deleteTask(task.id)">delete</button>
     </div>
 </template>

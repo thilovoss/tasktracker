@@ -2,10 +2,11 @@ import { defineStore } from 'pinia'
 import axios from "axios"
 
 export interface Task {
+    id?: String;
     name: string;
     description: string;
-    start: string;
-    end: string;
+    start: Date;
+    end: Date;
     categoryId?: string;
 }
 
@@ -33,6 +34,13 @@ export const useTaskStore = defineStore("tasks", {
         async createTask(task: Task) {
             try {
                 await axios.post("http://localhost:8080/api/task", task)
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        async deleteTask(id: String) {
+            try {
+                await axios.delete("http://localhost:8080/api/task/"+id)
             } catch (error) {
                 console.log(error)
             }
