@@ -10,6 +10,7 @@ export interface Task {
     categoryId?: string;
 }
 
+
 export const useTaskStore = defineStore("tasks", {
     state: () => ({
         tasks: [] as Task[]

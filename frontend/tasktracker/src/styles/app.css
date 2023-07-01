@@ -19,6 +19,7 @@
         @apply focus-visible:border-[#aaaeb7];
         @apply focus-visible:border-[1px];
         @apply focus-visible:outline-none;
+        @apply focus:outline-0;
         @apply hover:border-[#aaaeb7];
         @apply ease-in;
         @apply duration-200;
@@ -34,6 +35,7 @@
         @apply focus-visible:border-[1px];
         @apply focus-visible:ease-linear;
         @apply focus-visible:duration-75;
+        @apply focus:outline-0;
         @apply hover:border-[#aaaeb7];
         @apply ease-in;
         @apply duration-200;

@@ -14,11 +14,10 @@ function calculateDuration(start: String, end: String) {
     if (differenceMilliseconds < 3.6e6) {
         difference = differenceMilliseconds / 60000 + "m"
     } else if (differenceMilliseconds < 8.64e7) {
-        difference = differenceMilliseconds / 3.6e6 + "h"
+        difference = Math.round((differenceMilliseconds / 3.6e6) * 10) / 10 + "h"
     } else {
-        difference = differenceMilliseconds / 8.64e7 + "d"
+        difference = Math.round((differenceMilliseconds / 8.64e7) * 10) / 10 + "d"
     }
-    // const minutes = (endDate - startDate) / 60000
 
     return difference
 }
@@ -47,7 +46,7 @@ export default {
         <div class="col-span-2">
             <h2 class="text-primary">{{ task.name }}</h2>
             <p class="text-primary">{{ task.description }}</p>
-            
+
         </div>
         <div class="col-span-1">
             <div class="text-primary">start: {{ convertDate(task.start) }}</div>
